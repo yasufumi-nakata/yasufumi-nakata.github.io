@@ -1,0 +1,27 @@
+development:
+  adapter: mysql
+  database: skip_development
+  username: root
+  password:
+  encoding: UTF8
+
+test:
+  adapter: mysql
+  database: skip_test
+  username: root
+  password:
+  encoding: UTF8
+
+cucumber:
+  adapter: mysql
+  database: skip_cucumber
+  username: root
+  password:
+  encoding: UTF8
+
+production:
+  adapter: mysql
+  database: skip_production
+  username: root
+  password:
+  encoding: UTF8
