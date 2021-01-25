@@ -1,0 +1,6 @@
+<% root_stock_entry = stock_entries.select{ |entry| entry.parent_id.blank? }.first -%>
+<% unless root_stock_entry.blank? -%>
+  <div class="index">
+    <ul><%= render :partial => 'group/stock_entries', :locals => { :stock_entries => BoardEntry.children(root_stock_entry).aim_type('stock_entry') } %></ul>
+  </div>
+<% end -%>

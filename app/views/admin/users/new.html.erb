@@ -1,0 +1,12 @@
+<% content_for :topic_path do -%>
+<%= render :partial => '/admin/shared/topic_path' %>
+<% end -%>
+
+<div class="box tabular">
+<% form_tag(admin_users_path) do %>
+<%= render :partial => 'form' %>
+  <p>
+    <%= submit_tag _('Create'), :disable_with => _('Creating...') %>
+  </p>
+<% end %>
+</div>

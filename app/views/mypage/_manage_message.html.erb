@@ -1,0 +1,31 @@
+<% content_for :contents_left do -%>
+  <%= render :partial => "manage_menu", :locals => { :selected_menu => @menu } %>
+<% end -%>
+
+<% content_for :contents_right do -%>
+  <div class="desc ui-corner-all margin05emver">
+    <%= _('You can manage your preference for email notifications.<br/>By checking the items, notification emails will be sent to your registered email address when new comments etc. are added to your profile and blog entries.')%>
+  </div>
+
+  <div class="edit_form_space ui-corner-all">
+  <% form_tag :action => 'update_message_unsubscribes' do -%>
+    <table class="manage_message">
+      <col class="col25" />
+      <col />
+      <tbody>
+        <tr>
+          <th>&nbsp;</th>
+          <th><%= _('description') %></th>
+        </tr>
+        <% SystemMessage::MESSAGE_TYPES.each do |message_type| -%>
+          <tr class=<%= cycle 'even', 'odd' %>>
+            <td><%= check_box_tag("message_type[#{message_type}]", "ON", !@unsubscribes.include?(message_type)) %></td>
+            <td><%= label_tag("message_type[#{message_type}]", h(_(SystemMessage.description(message_type)))) %></td>
+          </tr>
+        <% end -%>
+      </tbody>
+    </table>
+    <%= submit_tag _('Save') %>
+  <% end -%>
+  </div>
+<% end -%>

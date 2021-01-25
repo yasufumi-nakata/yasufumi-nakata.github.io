@@ -1,0 +1,42 @@
+<div class="box"><%= _('Here you can set RSS feeds to be shown on the right of My Page.<br />Set this when you wish to have new entries or news from specific sites shown on SKIP My Page.') %></div>
+<% @revert_columns = %w(mypage_feed_default_limit mypage_feed_timeout) %>
+<div class="box tabular">
+  <p><%= settings_label_with_select_tag :mypage_feed_default_limit, (1..5).to_a.map{ |i| i.to_s } %></p>
+  <p><%= settings_label_with_select_tag :mypage_feed_timeout, (1..15).to_a.map{ |i| i.to_s } %></p>
+  <div id="feed_items">
+    <p><%= label Admin::Setting.name, :mypage_feed_settings %>
+    <a id="add_feed_item" href="#"><%= _("[Add feed field]")%></a>
+    <a id="remove_feed_item" href="#"><%= _("[Delete feed field]")%></a>
+    </p>
+    <% Admin::Setting.mypage_feed_settings.each_with_index do |feed_setting, index| -%>
+      <% @feed_setting = feed_setting %>
+      <% @index = index %>
+      <%= render :partial => 'feed_item' %>
+    <% end -%>
+  </div>
+</div>
+
+<% content_for :javascript_initializers do -%>
+    var index = <%= @index || 0 %>;
+    $j('#add_feed_item')
+    .click(function(){
+        index++;
+        $j.ajax({
+            url: '<%= admin_settings_ado_feed_item_url %>',
+            data: 'index=' + index,
+            success: function(html) {
+                $j('#feed_items').append(html);
+            }
+        });
+    });
+    $j('#remove_feed_item')
+    .click(function(){
+        $j('.feed_item:last').remove();
+    });
+    $j('form')
+    .submit(function(){
+        if($j('.feed_item').size() == 0){
+            $j('#feed_items').append('<%= hidden_field_tag 'settings[mypage_feed_settings]', '' %>')
+        }
+    });
+<% end -%>

@@ -1,0 +1,5 @@
+<div class="g_result_info">
+<%= _("Search result of <b>%s</b>") % h(query)%><%= _("Showing <b>%{start}</b> - <b>%{end}</b> of <b>%{max}</b>") % {:start =>start_count, :end => end_count, :max=> max_count}%>
+<%= link_to_search(_("[Prev]"), query, prev_offset, params) if prev_offset %>
+<%= link_to_search(_("[Next]"), query, next_offset, params) if next_offset %>
+</div>

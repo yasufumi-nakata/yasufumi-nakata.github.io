@@ -1,1 +1,0 @@
-# yasufumi-nakata.github.io

@@ -1,0 +1,59 @@
+<%
+  hiki = _("Hiki Notation")
+  terms = _("Terms of Use")
+  about = _("About This Site")
+
+  replace_advertisement_js = <<-RUBY
+    // 広告のリプレイス
+    var replaceBannerLink = function(ads) {
+      ad = ads[Math.floor(Math.random() * ads.length)];
+      jQuery('div#header > div.banner').html(
+        jQuery('<a></a>')
+        .attr('href', ad.advertisement.link_url)
+        .attr('target', '_blank')
+        .append(
+          jQuery('<img></img>')
+          .attr('src', ad.advertisement.image_url)
+          .attr('alt', ad.advertisement.title)
+          .css('height', '40px')
+        )
+      );
+    };
+    var url = '#{SkipEmbedded::InitialSettings['advertisements_url']}'
+    if( url != '' )
+      jQuery.getJSON(url, replaceBannerLink);
+  RUBY
+  replace_application_link_js = <<-RUBY
+    // アプリメニューのリプレイス
+    jQuery('#application_link').html('#{application_link}');
+  RUBY
+  header_js = <<-RUBY
+(function() {
+    // ロゴのリプレイス
+    jQuery('#logo').find('img').attr('src', '#{root_url + "custom/images/header_logo.png"}');
+    #{replace_advertisement_js if SkipEmbedded::InitialSettings['advertisements_url']}
+    #{replace_application_link_js unless OauthProvider.enable.empty?}
+    // フッターのリプレイス
+    jQuery('#footer').html('#{footer_link}');
+    jQuery('#other_link')
+    .toggle(function() {
+        jQuery('#other_links').css('right',(jQuery(window).width() - jQuery(this).offset().left - jQuery(this).width())).show();
+    }, function() {
+        jQuery('#other_links').hide();
+    });
+    jQuery('body')
+    .click(function() {
+        jQuery('#other_links').hide();
+    });
+})(jQuery);
+// フッターで利用できるサブウインドウポップアップ表示メソッド
+function sub_window_open(url, title, width, height) {
+  sub_window = window.open(url, title, 'width='+width+',height='+height+',resizable=yes,scrollbars=yes');
+  sub_window.focus();
+};
+function open_hiki() { sub_window_open('#{root_url}hiki.html', 'HikiNotation', 500,600); };
+function open_rule() { sub_window_open('#{root_url}custom/rules.html', 'TermsOfUse', 780,700); };
+function open_site() { sub_window_open('#{root_url}custom/about_this_site.html', 'AboutThisSite', 720,660); };
+  RUBY
+-%>
+<%= header_js %>

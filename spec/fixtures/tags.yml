@@ -1,0 +1,13 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+a_tag:
+  created_on: <%= SkipFaker.today %>
+  updated_on: <%= SkipFaker.today %>
+  name: <%= SkipFaker.rand_char %>
+  tag_type:
+
+a_standard_tag:
+  created_on: <%= SkipFaker.today %>
+  updated_on: <%= SkipFaker.today %>
+  name: 日記
+  tag_type: STANDARD
+

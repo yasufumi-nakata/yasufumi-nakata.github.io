@@ -1,0 +1,28 @@
+<% content_for :contents_left do -%>
+  <%= render :partial => "mypage/manage_menu", :locals => { :selected_menu => @menu } %>
+<% end -%>
+
+<% content_for :contents_right do -%>
+  <div class="desc ui-corner-all">
+    <p><%= _('You can only upload %s pictures.') % Picture.max_files_size_per_user %><%= _("The file size is limited to %s kb.") % (Picture.max_file_size/1.kilobyte) %></p>
+  </div>
+
+  <%= render :partial => 'pictures/pictures', :locals => {:user => current_user, :with_action => true} %>
+
+  <% form_for([current_user, current_user.pictures.build], :html => {:multipart => true}) do |f| -%>
+    <%= error_messages_for :picture %>
+    <%= f.label :file %>
+    <%= f.file_field :file %>
+    <%= submit_tag _("Upload") %>
+  <% end -%>
+<% end -%>
+
+<% content_for :javascript_initializers do -%>
+    $j("form#new_picture")
+    .submit(function(){
+        if($j("#picture_file").val() == ""){
+            alert('<%= _("File name is mandatory.")%>');
+            return false;
+        }
+    });
+<% end -%>

@@ -1,0 +1,11 @@
+<%= @header %>
+
+<%= _('Your registration is complete.') %>
+<%= _('Your Login ID is %s.') % @login_id %>
+<%= _('Click on the URL below to access %s.') % Admin::Setting.abbr_app_title %>
+
+<%= @login_url %>
+
+<%= _('Login ID: %s') % @login_id %>
+
+<%= @footer %>

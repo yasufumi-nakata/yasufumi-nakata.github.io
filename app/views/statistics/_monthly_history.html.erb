@@ -1,0 +1,63 @@
+<h2 class="topix_title"><%= icon_tag('asterisk_orange') -%><%= _("History of %s") % h(_(SiteCount::STATISTICS_ITEMS[category.to_sym][:desc])) -%></h2>
+
+<div class="monthly_statictics_box ui-corner-all">
+<div class="navigate_menu">
+  <%= link_to _('[Prev month]'), '#', :class => 'change_month_link prev' %>
+  <%= link_to _('[This month]'), '#', :class => 'change_month_link current' %>
+  <%= link_to _('[Next month]'), '#', :class => 'change_month_link next' %>
+</div><!-- navigate_menu -->
+
+<div class="ui-corner-top" style="border:1px solid #aaa;background-color:gray;color:white;margin-top:3px;font-weight:bold;"><%= _("History of %s") % date.strftime(_('%b %Y')) %></div>
+
+<% unless site_counts.empty? %>
+<% pixel_par_value = 100.0 / max_value %>
+<div class="monthly_statistics_inner_space ui-corner-bottom">
+<% site_counts.each do |site_count| %>
+  <% value = site_count[category] %>
+  <% graph_color = max_value == value ? 'red' : 'silver' %>
+  <div class="monthly_statictics_line">
+    <div style="float:left;width:100px">
+      <%= link_to site_count.created_on.strftime(_('%b %d(%a)')), '#', :id => "current_statistics_link_#{site_count.created_on.year}_#{site_count.created_on.month}_#{site_count.created_on.day}", :class => 'current_statistics_link', :title => _("Showing data for the period starting from %s on the screen top.") % site_count.created_on.strftime(_('%b %d(%a)')) %>
+    </div>
+    <div style="float:left;width:40px;"><%= value %></div>
+    <div style="float:left;margin-left:10px;background-color:<%= graph_color %>;width:<%= pixel_par_value * value %>px;">　</div>
+    <div style="float:left;width:<%= 100 - (pixel_par_value * value) %>px;">　</div>
+  </div>
+  <div style="clear:left;"></div>
+<% end %>
+
+<div style="clear:left;"></div>
+
+</div><!-- monthly_statistics_box -->
+
+<% else %>
+<%= _('Data of this month not available.')%>
+<% end %>
+
+<script type="text/javascript">
+$j(function() {
+    // 各日時点の指標値を表示
+    $j('.current_statistics_link')
+    .click(function() {
+        var url = relative_url_root + '/statistics/ado_current_statistics';
+        $j.ajax({
+            url: url,
+            data: { year: this.id.split('_')[3],
+                    month: this.id.split('_')[4],
+                    day: this.id.split('_')[5]
+            },
+            error: function(event){
+                alert("<%= _('Communication failure.')%>");
+            },
+            success: function(request) {
+                $j('#current_statistics').html(request).highlight();
+            }
+        });
+        return false;
+    });
+
+    $j('.change_month_link.next').data('data', { category: '<%= h(category) %>', year: '<%= date.to_time.next_month.year %>', month: '<%= date.to_time.next_month.month %>' })
+    $j('.change_month_link.current').data('data', { category: '<%= h(category) %>', year: '<%= Time.now.year %>', month: '<%= Time.now.month %>' })
+    $j('.change_month_link.prev').data('data', { category: '<%= h(category) %>', year: '<%= date.to_time.last_month.year %>', month: '<%= date.to_time.last_month.month %>' })
+});
+</script>

@@ -1,0 +1,41 @@
+<%= render :partial => '/admin/data_menu_box' %>
+<% content_for :topic_path do -%>
+<%= render :partial => '/admin/shared/topic_path' %>
+<% end -%>
+<% content_for :contents_right do -%>
+
+<div class="box"><%= _('You can confirm uploaded files detail.') %></div>
+<div class="box tabular">
+  <%= render :partial => '/admin/search_box', :locals => { :class_name => 'Admin::ShareFile' } %>
+  <%= render :partial => '/admin/shared/sortable_table',
+             :locals => {
+               :columns => %w[owner_symbol_type owner_symbol user file_name publication_type description category],
+               :disp_columns_proc => lambda do |object,column|
+      case column
+      when "owner_symbol_type"
+        _("Symbol|Type|#{object.owner_symbol_type}")
+      when "owner_symbol"
+        object.owner_symbol_name
+      when "user"
+        object.user.name
+      when "file_name"
+        link_to object.send(column.to_sym), download_admin_share_file_path(object)
+      when "publication_type"
+        object.publication_type_name
+      when "description"
+        object.description[/.{1,100}/]
+      else
+        object.send(column.to_sym)
+      end
+    end,
+               :objects => @share_files,
+               :class_name => 'Admin::ShareFile',
+               :link_elem_size => 1,
+               :link_elem_proc => lambda { |object|
+      result = ""
+      result << content_tag(:td, link_to(_('Destroy'), object, {:confirm => _('Are you sure?'), :method => :delete}) )
+    }
+             }
+  -%>
+</div>
+<% end -%>

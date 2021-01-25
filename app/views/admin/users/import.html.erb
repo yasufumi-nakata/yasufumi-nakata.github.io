@@ -1,0 +1,139 @@
+<% content_for :topic_path do -%>
+<%= render :partial => '/admin/shared/topic_path' %>
+<% end -%>
+
+<div class="box">
+  <h3><%= _('Instructions for importing from a CSV file.') %></h3>
+  <p style="color:red;"><b><%= _('CSV file needs to be encoded in UTF-8.') %></b></p>
+  <p style="color:red;"><b><%= _('New user records will be created when the first column of the CSV file does not match the login ID of any existing record, while matching records will be updated.') %></b></p>
+  <p style="color:red;"><b><%= _('Changes made to %s, passwords etc by users will be overwritten upon data update.') % s_('User|Section') %></b></p>
+
+  <div class="upload_area">
+    <% form_tag import_new_admin_user_path, :multipart => true, :id => 'import_form' do -%>
+      <label for="file"><%= _('CSV file') %></label><%= file_field_tag :file %>
+      <button id="import_confirmation_button"><%= _('Import confirmation') %></button>
+      <%= submit_tag _('Upload'), :disable_with => _('Uploading...') %>
+      <p><label for="update_registered"><%= _("Append unregistered users only") %></label><%= check_box_tag "update_registered", "1", params[:update_registered] %><%= help_icon_tag :content => _("|You can ignore existing users and append unregistered users only by checking the checkbox.<br/>Uncheck and set attributes below if you want to batch update informations of existing users.") %></p>
+      <h4><%= _('Update attributes below:')%><%= help_icon_tag :content => _("|You can update certain attribute(s) by checking the checkboxes. See the sample to create CSV file.<br/>Name, password and email address are mandatory items for new users.") %></h4>
+      <p>
+        <% options = params[:options] || {} %>
+        <label for="options[name]"><%= _("Admin::User|Name") %></label><%= check_box_tag "options[name]", "1", options[:name], :class => "csv_options disable_uncheck_update_registered" %>
+        <label for="options[email]"><%= _("Admin::User|Email") %></label><%= check_box_tag "options[email]", "1", options[:email], :class => "csv_options disable_uncheck_update_registered" %>
+        <label for="options[section]"><%= _("Admin::User|Section") %></label><%= check_box_tag "options[section]", "1", options[:section], :class => "csv_options" %>
+      </p>
+    <% end -%>
+
+    <h3><%= _('Sample CSV file format') %></h3>
+<pre>
+111111<span class="example_name">,<%= _('Taro Yamada')%></span><span class="example_email">,yamada@example.com</span><span class="example_section">,<%= _('Accounting')%></span>
+222222<span class="example_name">,<%= _('Hanako Yamada')%></span><span class="example_email">,h_yamada@example.com</span><span class="example_section">,<%= _('Human Resources')%></span>
+333333<span class="example_name">,<%= _('Jiro Suzuki')%></span><span class="example_email">,suzuki@example.com</span><span class="example_section">,<%= _('Development')%></span></pre>
+  </div>
+  <% unless @users.empty? -%>
+  <h2><%= _('Content of CSV file') %></h2>
+  <p><%= @error_row_only ? _('Showing lines containing error(s) only. Click the icon on the right edge of each row containing error(s) to show the detail. Follow the example to fix.') : _('Click the icon on the right edge of each row containing error(s) to show the detail. Follow the example to fix.') %></p>
+  <table class="normal sortable">
+    <thead>
+      <tr>
+        <th><%= _('Line') %></th>
+        <th><label><%= h Admin::Setting.login_account %></label></th>
+        <th><%= label Admin::User.name, :name %></th>
+        <th><%= label Admin::User.name, :email %></th>
+        <th><%= label Admin::User.name, :section %></th>
+        <td style="width:16px;"></td>
+      </tr>
+    </thead>
+    <tbody>
+      <% @users.each_with_index do |array, line| -%>
+        <% @user, @user_uid = array -%>
+        <% unless (@error_row_only &&  @user.errors.empty?) -%>
+        <tr class="<%= cycle('line_1', 'line_0') %>">
+          <td><%=h line+1 %></td>
+          <td><%=h @user_uid.uid %></td>
+          <td><%=h @user.name %></td>
+          <td><%=h @user.email %></td>
+          <td><%=h @user.section %></td>
+          <td>
+        <% unless @user.errors.empty? -%>
+          <%
+            error_msg = []
+            error_msg.concat @user.errors.full_messages.reject{|msg| msg.include?("User uid") }
+            error_msg.concat @user_uid.errors.full_messages
+          %>
+          <%= help_icon_tag :content => "|#{error_msg.join('|')}" %>
+        <% end -%>
+          </td>
+        </tr>
+      <% end -%>
+      <% end -%>
+    </tbody>
+  </table>
+  <% end -%>
+</div>
+
+<% content_for :javascript_initializers do -%>
+    $j('#import_confirmation_button')
+    .click(function(){
+        $j(this)
+        .attr('disabled', 'disabled')
+        .text('<%= _('Uploading...') %>');
+
+        $j('#import_form')
+        .attr('action', '<%= import_confirmation_new_admin_user_path %>')
+        .submit();
+        return false;
+    })
+
+    // CSVでアップロードするカラムが変更されたときにサンプルも変化する様に
+    $j('.csv_options')
+    .click(function(){
+        this.id.match(/\[(.*)\]/);
+        $j('.example_' + RegExp.$1).toggle();
+    });
+    $j.each($j('.csv_options'), function(i) {
+        this.id.match(/\[(.*)\]/);
+        var target_obj = $j('.example_' + RegExp.$1);
+        if (this.checked) {
+            target_obj.show();
+        } else {
+            target_obj.hide();
+        }
+    });
+
+    // 既存のユーザを更新しない場合は、必須項目のチェックを外せない様に
+    $j('#update_registered')
+    .click(function() {
+        checkUpdateRegistered(this);
+    });
+
+    $j.fn.disableAndAppendHidden = function () {
+        this
+        .attr("disabled", "disabled")
+        .attr("checked",true)
+        .each(function() {
+            $j(this).after("<input type='hidden' value='"+this.value+"' name='"+this.name+"'/>");
+        });
+        return this
+    };
+
+    $j.fn.enableAndRemoveHidden = function () {
+        this
+        .removeAttr("disabled")
+        .next("input[type='hidden']")
+        .remove();
+        return this
+    }
+
+    var checkUpdateRegistered = function(obj) {
+        if (obj.checked) {
+            $j('.disable_uncheck_update_registered')
+            .enableAndRemoveHidden();
+        } else {
+            $j('.disable_uncheck_update_registered')
+            .disableAndAppendHidden();
+
+            $j('.example_name, .example_email').show();
+        }
+    };
+    checkUpdateRegistered($j('#update_registered')[0]);
+<% end -%>

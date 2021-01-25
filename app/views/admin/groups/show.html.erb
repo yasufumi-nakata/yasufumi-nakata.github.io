@@ -1,0 +1,36 @@
+<%= render :partial => '/admin/data_menu_box' %>
+<% content_for :topic_path do -%>
+<%= render :partial => '/admin/shared/topic_path' %>
+<% end -%>
+<% content_for :contents_right do -%>
+
+
+<div class="box">
+<p>
+  <b><%= label @group.class, :name %>:</b>
+  <%=h @group.name %>
+</p>
+
+<p>
+  <b><%= label @group.class, :gid %>:</b>
+  <%=h @group.gid %>
+</p>
+
+<p>
+  <b><%= label @group.class, :description %>:</b>
+  <%=h @group.description %>
+</p>
+
+<p>
+  <b><%= label @group.class, :protected %>:</b>
+  <%= _("Group|Protected|#{@group.protected}") %>
+</p>
+
+<p>
+  <b><%= label @group.class, :group_category %>:</b>
+  <%=h @group.group_category.name %>
+</p>
+</div>
+
+<%= link_to _('Listing %{model}') % {:model => _('group participation')}, admin_group_group_participations_path(@group) %>
+<% end -%>

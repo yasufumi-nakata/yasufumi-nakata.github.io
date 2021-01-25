@@ -1,0 +1,78 @@
+<% profile_hash = @profiles.index_by(&:user_profile_master_id) %>
+<% UserProfileMasterCategory.all.each do |category| -%>
+  <% unless category.user_profile_masters.empty? -%>
+  <h2 class="subtitle"><%= h category.name %><span class="description"><%= h category.description %></span></h2>
+  <table class="normal user_info">
+    <% category.user_profile_masters.each do |master| -%>
+    <tr>
+      <th>
+        <%= label_tag "profile_value[#{master.id}]", h(master.name) %>
+        <%# 下で2回 html_escape して、descriptionを表示しているのは、cluetipでアンエスケープが行なわれるため -%>
+        <%= master.description.blank? ? '' : help_icon_tag(:content => h(h(master.description))) %>
+        <% if master.required %>
+          <div class="require">
+            (<%= _('required') %>)
+          </div>
+        <% end %>
+      </th>
+      <% profile = profile_hash[master.id] %>
+      <td>
+        <%= master.input_type_processer.to_edit_html(profile) %>
+      </td>
+    </tr>
+    <% end -%>
+  </table>
+  <% end -%>
+<% end -%>
+
+<% content_for :javascript_includes do -%>
+<%= skip_stylesheet_link_tag "themes/cupertino/ui.theme.css" %>
+<%= skip_stylesheet_link_tag "themes/cupertino/ui.datepicker.css" %>
+<%= skip_jquery_include_tag 'ui.datepicker' %>
+<%= skip_javascript_include_tag "jquery/ui/i18n/ui.datepicker-ja.js" %>
+<% end -%>
+
+<%= ckeditor '.min_ckeditor', {'toolbar' => 'EntrySimple'} %>
+
+<% content_for :javascript_initializers do -%>
+    $j('.cancel_radio')
+    .click(function(){
+        $j("input[name='"+this.target+"']")
+        .removeAttr('checked');
+        return false;
+    });
+
+    $j('.datepicker').datepicker(
+        $j.extend({},
+            $j.datepicker.regional['<%= GetText.locale.to_s %>'],
+            { duration: '',
+              yearRange: '-80:10',
+              showOn: 'both',
+              buttonImage: relative_url_root + '/images/skip/jquery/ui.datepicker/calendar.png',
+              buttonImageOnly: true
+            }
+        )
+    );
+
+    var toggleAppendableSelect =  function(elem) {
+        if ($j(elem).val() != "") {
+            $j("select[name='"+elem.name+"']").attr("disabled", true);
+            elem.name = $j.data(elem, "real_name");
+        } else {
+            $j("select[name='"+elem.name+"']").attr("disabled", false);
+            elem.name = "_";
+        };
+    };
+
+    $j('.appendable_text')
+    .blur(function(){
+        toggleAppendableSelect(this);
+    })
+    .keyup(function(e){
+        toggleAppendableSelect(this);
+    })
+    .each(function(){
+        $j.data(this, "real_name", this.name);
+        toggleAppendableSelect(this);
+    });
+<% end -%>

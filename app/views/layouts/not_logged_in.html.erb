@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<head>
+  <%= render :partial => 'shared/common_header', :locals => {:title => @title } %>
+</head>
+
+<body>
+<%= render :partial => "shared/header" %>
+<%= render :partial => "shared/flash_message" %>
+
+<div id="main">
+  <div id="contents_container">
+    <% if @content_for_contents_left -%>
+    <div id="contents_left">
+      <%= yield :contents_left %>
+    </div><!-- contents_left -->
+    <% end -%>
+
+    <% if @content_for_contents_right -%>
+    <div id="contents_right">
+      <% if @content_for_topic_path -%>
+      <div id="topic_path">
+        <%= yield :topic_path %>
+      </div><!-- topic_path -->
+      <% end %>
+      <%= yield :contents_right %>
+    </div><!-- contents_right -->
+    <% else -%>
+      <% if @content_for_topic_path -%>
+      <div id="topic_path">
+        <%= yield :topic_path %>
+      </div><!-- topic_path -->
+      <% end %>
+    <% end -%>
+
+    <%= yield %>
+
+    <% if @content_for_contents_bottom -%>
+    <div id="contents_bottom">
+      <%= yield :contents_bottom %>
+    </div><!-- contents_bottom -->
+    <% end -%>
+  </div><!-- contents_container -->
+</div><!-- main -->
+
+<%= render :partial => "shared/footer" -%>
+
+<%= all_javascript_include_tag 'jquery' %>
+<% javascript_tag do -%>
+$j = jQuery.noConflict();
+var relative_url_root = '<%= relative_url_root %>';
+<% end -%>
+<%= javascript_include_tag 'application' %>
+<%= skip_reflect_customized_javascript_include_tag %>
+<%= javascript_include_tag :skip_embedded, :cache => "skip_embedded" %>
+<%= yield :javascript_includes %>
+
+<% javascript_tag do -%>
+$j(function(){
+    <%= yield :javascript_initializers %>
+});
+<% end -%>
+
+<%= google_analytics_tag %>
+</body>
+</html>
