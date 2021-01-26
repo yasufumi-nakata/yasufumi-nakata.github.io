@@ -1,2 +1,0 @@
-module Feed::BookmarksHelper
-end
