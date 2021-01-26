@@ -92,7 +92,7 @@ SKIPを動かすことができます。
   （config/initial_settings.yml, config/database.yml, config/common_menus.ymlを適切に編集してください）
 
 4. データベースの作成（mysqlが起動済みであること）
---------------------------------------------------------------------------------
+ここまで完了--------------------------------------------------------------------------------
     $ RAILS_ENV=production rake db:create
     $ RAILS_ENV=production rake db:migrate
 
