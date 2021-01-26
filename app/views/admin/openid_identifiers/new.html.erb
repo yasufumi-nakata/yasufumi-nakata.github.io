@@ -1,0 +1,22 @@
+<%= render :partial => '/admin/data_menu_box' %>
+<% content_for :topic_path do -%>
+<%= render :partial => '/admin/shared/topic_path' %>
+<% end -%>
+<% content_for :contents_right do -%>
+
+
+<div class="box tabular">
+<% form_for(@openid_identifier, :url => admin_user_openid_identifiers_url(@user)) do |f| %>
+  <%= error_messages_for :openid_identifier %>
+
+  <p>
+    <%= f.label :url %>
+    <%= f.text_field :url %>
+  </p>
+  <p>
+    <%= f.submit _('Create'), :disable_with => _('Creating...') %>
+  </p>
+<% end %>
+</div>
+
+<% end -%>

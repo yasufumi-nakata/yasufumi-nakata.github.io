@@ -1,0 +1,90 @@
+<% content_for :stylesheet do -%>
+  <style type="text/css">
+  div.group_info_space {
+    margin-bottom: 10px;
+    width: 100%;
+  }
+  div.group_info_space_desc {
+    margin-top: 5px;
+    margin-left: 10px;
+    width: 97%;
+    text-align: left;
+    border: 1px solid silver;
+    overflow: hidden;
+  }
+  div.group_info_space_desc_body {
+    margin: 5px;
+  }
+  div.group_info_space_lines {
+    margin-left: 10px;
+    width: 97%;
+    text-align: left;
+    overflow: hidden;
+    font-weight: bold;
+  }
+  div.group_info_space_lines_line {
+    margin-top: 5px;
+    border-bottom: 1px dashed silver;
+  }
+  div.box_space_body p.button {
+    text-align: center;
+    margin-top: 5px;
+  }
+  </style>
+<% end -%>
+
+<% content_for :contents_left do -%>
+  <%= render :partial => 'action_box' %>
+
+  <div class="box_space">
+    <div class="box_space_title"><%= icon_tag('user_suit') -%><%= _('Administrator')%></div>
+    <div class="box_space_body">
+      <ul>
+      <% @owners.each do |user| %>
+        <li><%= user_link_to user %></li>
+      <% end %>
+      </ul>
+    </div>
+    <div class="box_space_bottom"></div>
+  </div><!-- box_space -->
+
+  <% unless @except_owners.empty? %>
+  <div class="box_space">
+    <div class="box_space_title"><%= icon_tag('group') -%><%= _('Members')%></div>
+    <div class="box_space_body">
+      <ul>
+      <% @except_owners.each do |user| %>
+        <li><%= user_link_to user %></li>
+      <% end %>
+      </ul>
+    </div>
+    <div class="box_space_bottom"><%= link_to _("[...See all]"), :action => 'users' %></div>
+  </div><!-- box_space -->
+  <% end -%>
+
+  <%= render :partial => 'collaboration_app/operation_boxes' %>
+
+<% end -%>
+
+<% content_for :contents_right do -%>
+  <div class="group_info_space">
+    <div class="group_info_space_desc ui-corner-all">
+      <div class="group_info_space_desc_body"><%= render_richtext(@group.description, @group.symbol) -%></div>
+    </div>
+  </div><!-- group_info_space -->
+
+  <%= render :partial => 'stock_entry_of_top' if @group.default_stock_entry %>
+
+  <% unless @recent_messages.blank? %>
+    <%= render :partial => "entries/topix_entries",
+      :locals => {
+        :title => _('Recent Entries'),
+        :entries => @recent_messages,
+        :last_updated_desc => true,
+        :include_search_form => true,
+      }
+    %>
+  <% end %>
+
+  <%= render(:partial => 'collaboration_app/feeds') %>
+<% end -%>

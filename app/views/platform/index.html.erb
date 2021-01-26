@@ -1,0 +1,38 @@
+<% content_for :stylesheet do -%>
+  <style type="text/css">
+  div#main {
+    background-image: url('<%= relative_url_root %>/custom/images/<%= @img_name %>');
+    height: 330px;
+  }
+  </style>
+<% end -%>
+
+<div id="platform_main_wrapper">
+  <div id="platform_main" class="<%= Admin::Setting.enable_login_keyphrase ? 'with_keyphrase' : "without_keyphrase" %>">
+    <div class="col">
+      <% if enable_activate? -%>
+      <div class="login-box ui-corner-all">
+        <p><%= _('Signup') %></p>
+        <div style="text-align: center; font-weight: bold; font-size: 14px;"><%= link_to _('Register your profile and start using %s') % Admin::Setting.abbr_app_title, activate_url %></div>
+      </div>
+      <% end -%>
+    </div>
+    <div class="col">
+      <div id="desc_before_login" class="ui-corner-all"><%= skip_image_tag 'indicator.gif' %></div>
+    </div>
+    <div class="clear_both"></div>
+  </div>
+</div>
+
+<% content_for :header_form do -%>
+  <div id="login_container" class="<%= Admin::Setting.enable_login_keyphrase ? 'with_keyphrase' : "without_keyphrase" %> ui-corner-all">
+    <%= render :partial => 'shared/login_form' %>
+  </div>
+<% end -%>
+
+<% content_for :javascript_initializers do -%>
+    $j('#desc_before_login').load(relative_url_root + '/custom/about_this_site.html', function(text) {
+      if (text == "") { $j('#desc_before_login').hide(); }
+    });
+    $j('#desc_before_login, .login-box').fadeTo('slow',0.8);
+<% end -%>

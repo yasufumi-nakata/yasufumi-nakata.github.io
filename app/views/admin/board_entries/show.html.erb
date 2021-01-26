@@ -1,0 +1,44 @@
+<%= render :partial => '/admin/data_menu_box' %>
+<% content_for :topic_path do -%>
+<%= render :partial => '/admin/shared/topic_path' %>
+<% end -%>
+<% content_for :contents_right do -%>
+
+<div class="box entry">
+<p>
+  <b><%= label @board_entry.class, :Entry_type %>:</b>
+  <%=h _("BoardEntry|Entry type|#{@board_entry.entry_type}") %>
+</p>
+
+<p>
+  <b><%= label @board_entry.class, :Symbol %>:</b>
+  <%=h @board_entry.symbol_name %>
+</p>
+
+<p>
+  <b><%= label @board_entry.class, :User %>:</b>
+  <%=h @board_entry.user.name %>
+</p>
+
+<p>
+  <b><%= label @board_entry.class, :Title %>:</b>
+  <%=h @board_entry.title %>
+</p>
+
+<p>
+  <b><%= label @board_entry.class, :Publication_type %>:</b>
+  <%=h @board_entry.publication_type_name %>
+</p>
+
+<p>
+  <b><%= label @board_entry.class, :Contents %>:</b>
+  <div class="contents"><%= show_contents @board_entry %></div>
+</p>
+
+<p>
+  <b><%= label @board_entry.class, :Category %>:</b>
+  <%=h @board_entry.category %>
+</p>
+</div>
+<%= link_to _('Listing %{model}') % {:model => _('board entry comment')}, admin_board_entry_board_entry_comments_path(@board_entry) %>
+<% end -%>

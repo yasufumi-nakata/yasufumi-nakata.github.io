@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <title><%= h Admin::Setting.abbr_app_title -%> - <%= _('Subwindow')%></title>
+  <%= skip_stylesheet_link_tag 'jquery.autocomplete.css' %>
+  <%= skip_stylesheet_link_tag "jquery.cluetip.css" %>
+  <%= skip_stylesheet_link_tag "themes/cupertino/ui.theme.css" %>
+  <%= stylesheet_link_tag :skip_embedded_sprites %>
+  <%= all_stylesheet_link_tag "style" %>
+  <%= yield :stylesheet %>
+</head>
+
+<body>
+<%= render :partial => "shared/flash_message" %>
+<div id="main" style="margin: 10px;">
+  <%= yield %>
+</div><!-- main -->
+
+<%= all_javascript_include_tag 'jquery' %>
+<% javascript_tag do -%>
+$j = jQuery.noConflict();
+var relative_url_root = '<%= relative_url_root %>';
+<% end -%>
+<%= javascript_include_tag 'application' %>
+<%= javascript_include_tag :skip_embedded, :cache => "skip_embedded" %>
+<%= yield :javascript_includes %>
+
+<% javascript_tag do -%>
+$j(function(){
+    <%= yield :javascript_initializers %>
+});
+<% end -%>
+</body>
+</html>

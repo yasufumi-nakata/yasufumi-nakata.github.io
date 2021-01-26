@@ -1,0 +1,37 @@
+<% content_for :stylesheet do -%>
+  <style type="text/css">
+  div.access_count {
+    text-align: center;
+    font-size: 15px;
+    font-weight: bold;
+    border: 1px dashed #ffc000;
+    margin: 2px 0;
+  }
+  ul.access_tracks {
+    list-style-type: none;
+    margin: 5px 15px;
+  }
+  ul.access_tracks li {
+    border-bottom: 1px dotted silver;
+  }
+  </style>
+<% end -%>
+
+<% if entry_accesses.size == 0 %>
+    <%= _('This entry has not been accessed.')%>
+<% else %>
+<div class="desc ui-corner-all" style="font-size: 10px;">
+  <p><%=_("Showing total access count of this entry and recent visitors (max. %s).<br/>\nOnly the newest access is shown in case a user has visited multiple times in a day.") % Admin::Setting.access_record_limit %></p>
+</div>
+
+<div class="access_count ui-corner-all">
+  <%= _('Access Count: ')%><%= h total_count -%>
+</div>
+
+<ul class="access_tracks">
+  <% entry_accesses.each do |access| %>
+    <li><%=h access.updated_on.strftime(_('%B %d %Y %H:%M - ')) -%>
+    <%= user_link_to access.visitor -%></li>
+  <% end %>
+</ul>
+<% end %>

@@ -1,0 +1,18 @@
+<% content_for :contents_left do -%>
+  <%= render :partial => 'contents_left_base' %>
+<% end -%>
+
+<% content_for :contents_right do -%>
+  <div class="desc ui-corner-all">
+    <p><%= _("Showing total access count of all your pages and recent visitors (max. 30).<br/>\nOnly the newest access is shown in case a user has visited multiple times in a day.")%></p>
+  </div>
+
+  <ul class="access_tracks">
+    <% @access_tracks.each do |track| -%>
+      <li>
+        <%=h track.updated_on.strftime(_('%c - ')) %>
+        <%= user_link_to track.visitor %>
+      </li>
+    <% end -%>
+  </ul>
+<% end -%>

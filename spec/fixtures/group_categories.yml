@@ -1,0 +1,13 @@
+biz:
+  code: BIZ
+  name: ビジネス
+  icon: page_word
+  description:
+  initial_selected: true
+
+life:
+  code: LIFE
+  name: ライフ
+  icon: group_gear
+  description:
+  initial_selected: false

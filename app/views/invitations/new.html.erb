@@ -1,0 +1,29 @@
+<% content_for :contents_right do -%>
+  <div class="edit_form_space ui-corner-all">
+    <h2 class="subtitle"><%= _('Invite a user')%></h2>
+    <% form_for [current_user, @invitation] do |f| -%>
+      <%= error_messages_for :invitation %>
+      <table class="normal invitation">
+        <col class="col25" />
+        <col class="col100" />
+          <tr>
+            <th><%= f.label :email %></th>
+            <td><%= f.text_field :email, :size => 60 %></td>
+          </tr>
+          <tr>
+            <th><%= f.label :subject %></th>
+            <td><%= f.text_field :subject, :size => 60 %></td>
+          </tr>
+          <tr>
+            <th><%= f.label :body %><%= _('(The body template is appended to the body when the email is sent.)') %></th>
+            <td>
+              <%= f.text_area :body, :size => '60x15' %>
+              <pre><%= h(@invitation.body_template) %></pre>
+              <%= f.hidden_field :body_template %>
+            </td>
+          </tr>
+      </table>
+      <%= f.submit _('Send'), :disable_with => _('Sending...') %>
+    <% end -%>
+  </div>
+<% end -%>

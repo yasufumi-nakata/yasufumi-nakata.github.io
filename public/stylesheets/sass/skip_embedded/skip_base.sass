@@ -1,0 +1,100 @@
+// グローバル変数定義
+// ------------------------------------------------------------
+!base_color ||= #555
+!base_background_color ||= #fff
+!base_font_size ||= 12px
+!small_font_size ||= !base_font_size - 2px
+!x_small_font_size ||= !small_font_size - 2px
+!large_font_size ||= !base_font_size + 2px
+!x_large_font_size ||= !large_font_size + 2px
+!base_border ||= 1px solid #ccc
+!base_dashed_border ||= 1px dashed #ccc
+!base_dotted_border ||= 1px dotted #ccc
+
+// Mix-in
+// ------------------------------------------------------------
+=text_base(!font_size = !base_font_size, !color = !base_color)
+  :font
+    :size = !font_size
+    :family "Hiragino Kaku Gothic Pro","ヒラギノ角ゴ Pro W3","ＭＳ Ｐゴシック",'メイリオ',Meiryo,Geneva,Arial,Verdana,sans-serif
+    :weight normal
+  :color = !color
+=middle_text(!color = !base_color)
+  +text_base
+=small_text(!color = !base_color)
+  +text_base(!small_font_size)
+=x_small_text(!color = !base_color)
+  +text_base(!x_small_font_size)
+=large_text(!color = !base_color)
+  +text_base(!large_font_size)
+=x_large_text(!color = !base_color)
+  +text_base(!x_large_font_size)
+=form_text
+  +text_base(!base_font_size, #000)
+=link_text
+  :text-decoration none
+  :color #0080dd
+=link_hover_text
+  :color blue
+  :text-decoration underline
+=link_visited_text
+  :color purple
+=default_link
+  +link_text
+  &:hover
+    +link_hover_text
+=clearfix
+  display: inline-block
+  &:after
+    content: "."
+    display: block
+    height: 0
+    clear: both
+    visibility: hidden
+  * html &
+    height: 1px
+
+// 基本スタイル
+// ------------------------------------------------------------
+*
+  :margin 0
+  :padding 0
+
+body
+  +middle_text
+  :position absolute
+  :left 0
+  :margin 0
+  :text-align left
+  :background-color = !base_background_color
+  :width 100%
+
+img
+  :vertical-align middle
+  :border 0
+
+a
+  +default_link
+
+form
+  :padding 0px
+  :margin 0px
+  input
+    +form_text
+    :margin 0px
+    :padding 2px
+  select
+    +form_text
+    :margin 0 2px 0 0
+    :padding 0
+    :letter-spacing 2px
+    :z-index 0
+  textarea
+    +form_text
+    :margin 0px
+    :padding 2px
+
+table
+  :font-size = !base_font_size
+  :table-layout fixed
+  :border-collapse collapse

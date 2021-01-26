@@ -1,0 +1,34 @@
+<%# locals: sel_year, sel_month, sel_day, item_count, action -%>
+<% selected_month = Date.new(sel_year.to_i, sel_month.to_i, 1) -%>
+<% prev_month = selected_month << 1 -%>
+<% next_month = selected_month >> 1 -%>
+<% now_month = Date.today -%>
+<% action ||= 'index' -%>
+<div class="box_space" id="calendar_body">
+  <div class="box_space_body">
+    <%= calendar(:year => sel_year, :month => sel_month) do |day|
+          if item_count == nil or item_count[day.mday]
+            cell_text = link_to(day.mday, :action => action, :year => sel_year, :month => sel_month, :day => day.mday)
+          else
+            cell_text = day.mday
+          end
+
+          if day == Date.today
+            cell_attrs = { :class => 'today' }
+          elsif sel_day && day == Date.new(sel_year, sel_month, sel_day)
+            cell_attrs = { :class => 'selected' }
+          elsif day.wday == 0 or day.wday == 6 or HOLIDAYS[day]
+            cell_attrs = { :class => 'holiday' }
+          else
+            cell_attrs = { :class => 'day' }
+          end
+          [cell_text, cell_attrs]
+        end
+    -%>
+  </div>
+  <div class="box_space_bottom">
+    <%= link_to(_('[Prev month]'), '#', :id => 'prev_month_link', :year => prev_month.year, :month => prev_month.month) %>
+    <%= link_to(_('[Today]'), {:action => action, :year => now_month.year, :month => now_month.month, :day => now_month.day}) %>
+    <%= link_to(_('[Next month]'), '#', :id => 'next_month_link', :year => next_month.year, :month => next_month.month) %>
+  </div>
+</div><!-- box_space -->

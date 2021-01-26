@@ -1,0 +1,42 @@
+<% user_ids = User.active.all(:select => 'id').map(&:id) -%>
+<% rand_user_ids = (1..2).map {|i| user_ids.delete(user_ids.rand) }.compact %>
+<% random_users = User.active.id_is(rand_user_ids) -%>
+<% search_label = _('Search the other users') %>
+<% unless random_users.empty? -%>
+<div id="random_profile_box" class="right_box ui-corner-all">
+  <h2 class="ui-corner-top"><%= _("User introductions") %></h2>
+  <table>
+    <tbody>
+      <% random_users.each do |user| -%>
+      <tr>
+        <td rowspan="2" style="width: 64px; padding: 5px;">
+          <%= user_link_to_with_portrait(user, :width => 64, :height => 64) %>
+        </td>
+        <td style="padding: 5px 5px 0 0;">
+          <%= user_link_to(user) %>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding: 0px 5px 5px 0;">
+          <span class="small_text"><%=h user.section %></span>
+        </td>
+      </tr>
+      <% end -%>
+      <tr>
+        <td style="padding: 5px;" colspan="2">
+          <% form_tag({:controller => '/search', :action => 'full_text_search'} ,:method => 'get') do -%>
+            <%= hidden_field_tag 'target_aid', 'skip' %>
+            <%= hidden_field_tag 'target_contents', 'user' %>
+            <%= text_field_tag "full_text_query", search_label, :class => "labeled-field", :style => 'width: 130px;' %>
+            <%= submit_tag _('Go'), :class => 'search_button' %>
+          <% end -%>
+          <%=h Admin::Setting.random_profile_help %>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<% end -%>
+<% content_for :javascript_initializers do -%>
+  $j('#random_profile_box input#full_text_query').labeledTextField(<%= {:message => search_label}.to_json %>);
+<% end -%>
